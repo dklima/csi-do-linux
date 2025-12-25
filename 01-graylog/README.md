@@ -42,6 +42,15 @@ Edite o `.env` com suas credenciais:
 sudo podman-compose up -d
 ```
 
+### Conflito com DNS local (porta 53)
+
+Se o servidor já tiver DNS rodando (dnsmasq, bind, systemd-resolved), use o compose alternativo:
+
+```bash
+sudo podman network create --disable-dns graylog-net
+sudo podman-compose -f compose-no-dns.yaml up -d
+```
+
 A primeira inicialização leva 2-3 minutos. Para acompanhar:
 
 ```bash
