@@ -94,11 +94,28 @@ sudo firewall-cmd --reload
 
 ## Testando
 
+**Importante**: Antes de testar, crie um Input na interface do Graylog:
+1. Acesse `http://SEU_IP:9000`
+2. Vá em **System** → **Inputs**
+3. Selecione **Syslog UDP** → **Launch new input**
+4. Configure: Node=Global, Title=Syslog UDP, Port=1514
+5. Clique em **Launch input**
+
+Depois, envie um log de teste:
+
 ```bash
 logger -n SEU_IP -P 1514 --udp "Teste de log remoto"
 ```
 
 A mensagem aparece em **Search** na interface do Graylog.
+
+### Troubleshooting
+
+Se as mensagens não aparecerem:
+
+1. Verifique se o Input está com status "RUNNING" (não "SETUP")
+2. Se estiver em "SETUP", clique no Input → "More actions" → "Start input"
+3. Se persistir, reinicie o container: `sudo podman restart graylog`
 
 ## Iniciar no boot
 
