@@ -1,0 +1,15 @@
+[Unit]
+Description=Graylog Stack (Graylog + OpenSearch + MongoDB)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory=/opt/graylog
+ExecStart=/usr/bin/podman-compose up -d
+ExecStop=/usr/bin/podman-compose down
+TimeoutStartSec=300
+
+[Install]
+WantedBy=multi-user.target

@@ -89,6 +89,29 @@ logger -n SEU_IP -P 1514 --udp "Teste de log remoto"
 
 A mensagem aparece em **Search** na interface do Graylog.
 
+## Iniciar no boot
+
+Para o stack subir automaticamente após reboot:
+
+```bash
+# Mover arquivos para local definitivo
+sudo mkdir -p /opt/graylog
+sudo cp compose.yaml .env /opt/graylog/
+
+# Instalar e habilitar o serviço
+sudo cp graylog.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable graylog.service
+```
+
+Controle manual:
+
+```bash
+sudo systemctl start graylog    # Inicia
+sudo systemctl stop graylog     # Para
+sudo systemctl status graylog   # Verifica status
+```
+
 ## Compatibilidade
 
 > **Atenção**: O Graylog não suporta OpenSearch 3.x. Use apenas a série 2.x.
