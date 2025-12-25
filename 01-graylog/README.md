@@ -44,12 +44,14 @@ sudo podman-compose up -d
 
 ### Conflito com DNS local (porta 53)
 
-Se o servidor já tiver DNS rodando (dnsmasq, bind, systemd-resolved), use o compose alternativo:
+Se o servidor já tiver DNS rodando (dnsmasq, bind, systemd-resolved), use o compose alternativo com IPs fixos:
 
 ```bash
-sudo podman network create --disable-dns graylog-net
+sudo podman network create --disable-dns --subnet 172.20.0.0/24 graylog-net
 sudo podman-compose -f compose-no-dns.yaml up -d
 ```
+
+IPs atribuídos: MongoDB `172.20.0.10`, OpenSearch `172.20.0.11`, Graylog `172.20.0.12`
 
 A primeira inicialização leva 2-3 minutos. Para acompanhar:
 
