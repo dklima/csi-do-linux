@@ -1,0 +1,23 @@
+# /etc/sssd/sssd.conf
+# Configuracao do SSSD para gravacao de sessoes com tlog
+#
+# IMPORTANTE: Apos copiar para /etc/sssd/sssd.conf, execute:
+#   sudo chmod 600 /etc/sssd/sssd.conf
+#   sudo systemctl restart sssd
+
+[sssd]
+services = nss, pam
+domains = local
+
+[domain/local]
+id_provider = files
+
+[session_recording]
+# scope: none, some, ou all
+scope = some
+
+# Usuarios a serem gravados (quando scope = some)
+users = root, admin
+
+# Grupos a serem gravados (quando scope = some)
+groups = wheel

@@ -6,10 +6,10 @@ Cada diretório contém os arquivos necessários para reproduzir o tutorial corr
 
 ## Artigos
 
-| # | Tema | Diretório | Status |
-|---|------|-----------|--------|
-| 01 | [Servidor de Logs com Graylog](https://fogonacaixadagua.com.br/2025/12/graylog-logs-centralizados-tutorial) | [01-graylog](./01-graylog) | ✅ Publicado |
-| 02 | Auditoria de Terminal | em breve | 🚧 Em desenvolvimento |
+| # | Tema | Diretório |
+|---|------|-----------|
+| 01 | [Servidor de Logs com Graylog](https://fogonacaixadagua.com.br/2025/12/graylog-logs-centralizados-tutorial/) | [01-graylog](./01-graylog) |
+| 02 | [Gravação de Sessões com tlog](https://fogonacaixadagua.com.br/2025/12/tlog-gravacao-sessoes-terminal-linux/) | [02-tlog](./02-tlog) |
 
 ## Pré-requisitos gerais
 
@@ -25,7 +25,11 @@ public_repo/
 │   ├── compose.yaml
 │   ├── .env.example
 │   └── ...
-├── 02-terminal-audit/   # (em breve)
+├── 02-tlog/             # Gravação de sessões de terminal
+│   ├── tlog-rec-session.conf
+│   ├── 10-graylog.conf
+│   ├── sssd.conf.example
+│   └── extract-session.sh
 └── ...
 ```
 
