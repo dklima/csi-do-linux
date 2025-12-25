@@ -61,6 +61,26 @@ sudo podman-compose logs -f graylog
 | 9000 | TCP | Interface web |
 | 1514 | UDP/TCP | Recebimento de logs (Syslog) |
 
+## Firewall
+
+No Fedora/RHEL com firewalld:
+
+```bash
+sudo firewall-cmd --add-port=9000/tcp --permanent
+sudo firewall-cmd --add-port=1514/udp --permanent
+sudo firewall-cmd --add-port=1514/tcp --permanent
+sudo firewall-cmd --reload
+```
+
+Para restringir por rede de origem (recomendado):
+
+```bash
+# Liberar apenas para a rede interna
+sudo firewall-cmd --permanent --add-rich-rule='rule family="ipv4" source address="192.168.1.0/24" port port="1514" protocol="udp" accept'
+sudo firewall-cmd --permanent --add-rich-rule='rule family="ipv4" source address="192.168.1.0/24" port port="1514" protocol="tcp" accept'
+sudo firewall-cmd --reload
+```
+
 ## Testando
 
 ```bash
