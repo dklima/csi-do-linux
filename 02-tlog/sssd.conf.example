@@ -1,16 +1,14 @@
 # /etc/sssd/sssd.conf
-# Configuracao do SSSD para gravacao de sessoes com tlog
+# Exemplo de configuracao do SSSD para gravacao de sessoes com tlog
 #
-# IMPORTANTE: Apos copiar para /etc/sssd/sssd.conf, execute:
-#   sudo chmod 600 /etc/sssd/sssd.conf
-#   sudo systemctl restart sssd
-
-[sssd]
-services = nss, pam
-domains = local
-
-[domain/local]
-id_provider = files
+# IMPORTANTE: Este metodo so funciona quando o SSSD e responsavel
+# pela autenticacao dos usuarios (LDAP, Active Directory, etc).
+#
+# Para usuarios puramente locais (/etc/passwd), use o metodo de
+# trocar o shell do usuario para /usr/bin/tlog-rec-session.
+#
+# Se voce ja usa SSSD para autenticacao centralizada, adicione
+# a secao [session_recording] abaixo ao seu sssd.conf existente.
 
 [session_recording]
 # scope: none, some, ou all
