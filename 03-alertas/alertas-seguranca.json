@@ -16,6 +16,7 @@
         "version": "1"
       },
       "id": "stream-ssh-audit",
+      "constraints": [],
       "data": {
         "title": {
           "@type": "string",
@@ -58,6 +59,7 @@
         "version": "1"
       },
       "id": "stream-tlog-sessions",
+      "constraints": [],
       "data": {
         "title": {
           "@type": "string",
@@ -100,6 +102,7 @@
         "version": "1"
       },
       "id": "stream-privilege-escalation",
+      "constraints": [],
       "data": {
         "title": {
           "@type": "string",
@@ -154,6 +157,7 @@
         "version": "1"
       },
       "id": "stream-firewall",
+      "constraints": [],
       "data": {
         "title": {
           "@type": "string",
@@ -214,6 +218,7 @@
         "version": "1"
       },
       "id": "stream-security-events",
+      "constraints": [],
       "data": {
         "title": {
           "@type": "string",
@@ -262,6 +267,7 @@
         "version": "1"
       },
       "id": "event-ssh-root-login",
+      "constraints": [],
       "data": {
         "title": {
           "@type": "string",
@@ -318,6 +324,7 @@
         "version": "1"
       },
       "id": "event-brute-force",
+      "constraints": [],
       "data": {
         "title": {
           "@type": "string",
@@ -399,6 +406,7 @@
         "version": "1"
       },
       "id": "event-dangerous-command",
+      "constraints": [],
       "data": {
         "title": {
           "@type": "string",
@@ -464,6 +472,7 @@
         "version": "1"
       },
       "id": "event-privileged-session",
+      "constraints": [],
       "data": {
         "title": {
           "@type": "string",
@@ -529,6 +538,7 @@
         "version": "1"
       },
       "id": "event-after-hours",
+      "constraints": [],
       "data": {
         "title": {
           "@type": "string",
@@ -594,6 +604,7 @@
         "version": "1"
       },
       "id": "event-first-time-access",
+      "constraints": [],
       "data": {
         "title": {
           "@type": "string",
@@ -659,6 +670,7 @@
         "version": "1"
       },
       "id": "rule-mark-after-hours",
+      "constraints": [],
       "data": {
         "title": {
           "@type": "string",
