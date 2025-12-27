@@ -1,0 +1,678 @@
+{
+  "v": 1,
+  "id": "csi-linux-alertas-seguranca",
+  "rev": 1,
+  "name": "CSI do Linux - Alertas de Segurança",
+  "summary": "Content pack com alertas de segurança do artigo 'Alertas Inteligentes no Graylog'",
+  "description": "Este content pack contém:\n- 6 Event Definitions para detecção de ameaças\n- 5 Streams para organização de logs de segurança\n- 1 Pipeline Rule para marcação de atividade fora de horário\n\nAlertas incluídos:\n1. SSH Root Login Detected\n2. Brute Force Attempt Detected\n3. Dangerous Command Executed\n4. Privileged User Session Started\n5. After-Hours Activity Detected\n6. First Time Access Detected",
+  "vendor": "Fogo na Caixa D'Água",
+  "url": "https://fogonacaixadagua.com.br/2025/12/graylog-alertas-seguranca/",
+  "parameters": [],
+  "entities": [
+    {
+      "v": "1",
+      "type": {
+        "name": "stream",
+        "version": "1"
+      },
+      "id": "stream-ssh-audit",
+      "data": {
+        "title": {
+          "@type": "string",
+          "@value": "SSH Audit"
+        },
+        "description": {
+          "@type": "string",
+          "@value": "Todos os logs do daemon SSH para auditoria de acessos"
+        },
+        "disabled": {
+          "@type": "boolean",
+          "@value": false
+        },
+        "matching_type": {
+          "@type": "string",
+          "@value": "AND"
+        },
+        "stream_rules": [
+          {
+            "field": "application_name",
+            "type": "EXACT",
+            "inverted": false,
+            "value": "sshd"
+          }
+        ],
+        "remove_matches_from_default_stream": {
+          "@type": "boolean",
+          "@value": false
+        },
+        "default_stream": {
+          "@type": "boolean",
+          "@value": false
+        }
+      }
+    },
+    {
+      "v": "1",
+      "type": {
+        "name": "stream",
+        "version": "1"
+      },
+      "id": "stream-tlog-sessions",
+      "data": {
+        "title": {
+          "@type": "string",
+          "@value": "Terminal Sessions (tlog)"
+        },
+        "description": {
+          "@type": "string",
+          "@value": "Logs de sessões de terminal gravadas pelo tlog"
+        },
+        "disabled": {
+          "@type": "boolean",
+          "@value": false
+        },
+        "matching_type": {
+          "@type": "string",
+          "@value": "AND"
+        },
+        "stream_rules": [
+          {
+            "field": "application_name",
+            "type": "REGEX",
+            "inverted": false,
+            "value": "^tlog.*"
+          }
+        ],
+        "remove_matches_from_default_stream": {
+          "@type": "boolean",
+          "@value": false
+        },
+        "default_stream": {
+          "@type": "boolean",
+          "@value": false
+        }
+      }
+    },
+    {
+      "v": "1",
+      "type": {
+        "name": "stream",
+        "version": "1"
+      },
+      "id": "stream-privilege-escalation",
+      "data": {
+        "title": {
+          "@type": "string",
+          "@value": "Privilege Escalation"
+        },
+        "description": {
+          "@type": "string",
+          "@value": "Logs de sudo, su e outros mecanismos de elevação de privilégio"
+        },
+        "disabled": {
+          "@type": "boolean",
+          "@value": false
+        },
+        "matching_type": {
+          "@type": "string",
+          "@value": "OR"
+        },
+        "stream_rules": [
+          {
+            "field": "application_name",
+            "type": "EXACT",
+            "inverted": false,
+            "value": "sudo"
+          },
+          {
+            "field": "application_name",
+            "type": "EXACT",
+            "inverted": false,
+            "value": "su"
+          },
+          {
+            "field": "application_name",
+            "type": "EXACT",
+            "inverted": false,
+            "value": "pkexec"
+          }
+        ],
+        "remove_matches_from_default_stream": {
+          "@type": "boolean",
+          "@value": false
+        },
+        "default_stream": {
+          "@type": "boolean",
+          "@value": false
+        }
+      }
+    },
+    {
+      "v": "1",
+      "type": {
+        "name": "stream",
+        "version": "1"
+      },
+      "id": "stream-firewall",
+      "data": {
+        "title": {
+          "@type": "string",
+          "@value": "Firewall Events"
+        },
+        "description": {
+          "@type": "string",
+          "@value": "Logs de iptables, nftables e firewalld"
+        },
+        "disabled": {
+          "@type": "boolean",
+          "@value": false
+        },
+        "matching_type": {
+          "@type": "string",
+          "@value": "OR"
+        },
+        "stream_rules": [
+          {
+            "field": "application_name",
+            "type": "EXACT",
+            "inverted": false,
+            "value": "iptables"
+          },
+          {
+            "field": "application_name",
+            "type": "EXACT",
+            "inverted": false,
+            "value": "nftables"
+          },
+          {
+            "field": "application_name",
+            "type": "EXACT",
+            "inverted": false,
+            "value": "firewalld"
+          },
+          {
+            "field": "message",
+            "type": "CONTAINS",
+            "inverted": false,
+            "value": "kernel: [FIREWALL]"
+          }
+        ],
+        "remove_matches_from_default_stream": {
+          "@type": "boolean",
+          "@value": false
+        },
+        "default_stream": {
+          "@type": "boolean",
+          "@value": false
+        }
+      }
+    },
+    {
+      "v": "1",
+      "type": {
+        "name": "stream",
+        "version": "1"
+      },
+      "id": "stream-security-events",
+      "data": {
+        "title": {
+          "@type": "string",
+          "@value": "Security Events"
+        },
+        "description": {
+          "@type": "string",
+          "@value": "Eventos de autenticação (facility auth e authpriv)"
+        },
+        "disabled": {
+          "@type": "boolean",
+          "@value": false
+        },
+        "matching_type": {
+          "@type": "string",
+          "@value": "OR"
+        },
+        "stream_rules": [
+          {
+            "field": "facility",
+            "type": "EXACT",
+            "inverted": false,
+            "value": "auth"
+          },
+          {
+            "field": "facility",
+            "type": "EXACT",
+            "inverted": false,
+            "value": "authpriv"
+          }
+        ],
+        "remove_matches_from_default_stream": {
+          "@type": "boolean",
+          "@value": false
+        },
+        "default_stream": {
+          "@type": "boolean",
+          "@value": false
+        }
+      }
+    },
+    {
+      "v": "1",
+      "type": {
+        "name": "event_definition",
+        "version": "1"
+      },
+      "id": "event-ssh-root-login",
+      "data": {
+        "title": {
+          "@type": "string",
+          "@value": "SSH Root Login Detected"
+        },
+        "description": {
+          "@type": "string",
+          "@value": "Alguém logou diretamente como root via SSH. Em servidores bem configurados, isso não deveria acontecer - o acesso deveria ser via sudo."
+        },
+        "priority": {
+          "@type": "integer",
+          "@value": 2
+        },
+        "alert": {
+          "@type": "boolean",
+          "@value": true
+        },
+        "config": {
+          "type": "aggregation-v1",
+          "query": "application_name:sshd AND message:\"session opened for user root\"",
+          "query_parameters": [],
+          "streams": [],
+          "search_within_ms": 60000,
+          "execute_every_ms": 60000,
+          "group_by": [],
+          "series": [],
+          "conditions": {
+            "expression": null
+          }
+        },
+        "field_spec": {
+          "source_ip": {
+            "data_type": "string",
+            "providers": [
+              {
+                "type": "template-v1",
+                "template": "${source}"
+              }
+            ]
+          }
+        },
+        "key_spec": [],
+        "notification_settings": {
+          "grace_period_ms": 300000,
+          "backlog_size": 5
+        },
+        "notifications": []
+      }
+    },
+    {
+      "v": "1",
+      "type": {
+        "name": "event_definition",
+        "version": "1"
+      },
+      "id": "event-brute-force",
+      "data": {
+        "title": {
+          "@type": "string",
+          "@value": "Brute Force Attempt Detected"
+        },
+        "description": {
+          "@type": "string",
+          "@value": "Mais de 10 falhas de autenticação SSH em 5 minutos do mesmo IP. Indica possível tentativa de brute force."
+        },
+        "priority": {
+          "@type": "integer",
+          "@value": 2
+        },
+        "alert": {
+          "@type": "boolean",
+          "@value": true
+        },
+        "config": {
+          "type": "aggregation-v1",
+          "query": "application_name:sshd AND (message:\"authentication failure\" OR message:\"Failed password\")",
+          "query_parameters": [],
+          "streams": [],
+          "search_within_ms": 300000,
+          "execute_every_ms": 60000,
+          "group_by": ["source"],
+          "series": [
+            {
+              "id": "count-",
+              "function": "count",
+              "field": null
+            }
+          ],
+          "conditions": {
+            "expression": {
+              "expr": ">",
+              "left": {
+                "expr": "number-ref",
+                "ref": "count-"
+              },
+              "right": {
+                "expr": "number",
+                "value": 10.0
+              }
+            }
+          }
+        },
+        "field_spec": {
+          "attacker_ip": {
+            "data_type": "string",
+            "providers": [
+              {
+                "type": "template-v1",
+                "template": "${source}"
+              }
+            ]
+          },
+          "attempt_count": {
+            "data_type": "string",
+            "providers": [
+              {
+                "type": "template-v1",
+                "template": "${count-}"
+              }
+            ]
+          }
+        },
+        "key_spec": ["source"],
+        "notification_settings": {
+          "grace_period_ms": 600000,
+          "backlog_size": 10
+        },
+        "notifications": []
+      }
+    },
+    {
+      "v": "1",
+      "type": {
+        "name": "event_definition",
+        "version": "1"
+      },
+      "id": "event-dangerous-command",
+      "data": {
+        "title": {
+          "@type": "string",
+          "@value": "Dangerous Command Executed"
+        },
+        "description": {
+          "@type": "string",
+          "@value": "Comando potencialmente perigoso detectado em sessão gravada pelo tlog. Requer investigação do contexto completo."
+        },
+        "priority": {
+          "@type": "integer",
+          "@value": 3
+        },
+        "alert": {
+          "@type": "boolean",
+          "@value": true
+        },
+        "config": {
+          "type": "aggregation-v1",
+          "query": "application_name:tlog* AND (message:\"rm -rf\" OR message:\"chmod 777\" OR message:\"curl*|*sh\" OR message:\"wget*|*bash\" OR message:\"iptables -F\" OR message:\"iptables --flush\" OR message:\"passwd root\" OR message:visudo)",
+          "query_parameters": [],
+          "streams": [],
+          "search_within_ms": 60000,
+          "execute_every_ms": 60000,
+          "group_by": [],
+          "series": [],
+          "conditions": {
+            "expression": null
+          }
+        },
+        "field_spec": {
+          "detected_pattern": {
+            "data_type": "string",
+            "providers": [
+              {
+                "type": "template-v1",
+                "template": "${message}"
+              }
+            ]
+          },
+          "source_host": {
+            "data_type": "string",
+            "providers": [
+              {
+                "type": "template-v1",
+                "template": "${source}"
+              }
+            ]
+          }
+        },
+        "key_spec": [],
+        "notification_settings": {
+          "grace_period_ms": 60000,
+          "backlog_size": 5
+        },
+        "notifications": []
+      }
+    },
+    {
+      "v": "1",
+      "type": {
+        "name": "event_definition",
+        "version": "1"
+      },
+      "id": "event-privileged-session",
+      "data": {
+        "title": {
+          "@type": "string",
+          "@value": "Privileged User Session Started"
+        },
+        "description": {
+          "@type": "string",
+          "@value": "Nova sessão de terminal iniciada como root ou outro usuário privilegiado. Evento informativo para awareness."
+        },
+        "priority": {
+          "@type": "integer",
+          "@value": 4
+        },
+        "alert": {
+          "@type": "boolean",
+          "@value": true
+        },
+        "config": {
+          "type": "aggregation-v1",
+          "query": "application_name:tlog-rec-session AND message:rec AND (TLOG_USER:root OR TLOG_USER:admin OR TLOG_USER:postgres OR TLOG_USER:mysql)",
+          "query_parameters": [],
+          "streams": [],
+          "search_within_ms": 60000,
+          "execute_every_ms": 60000,
+          "group_by": [],
+          "series": [],
+          "conditions": {
+            "expression": null
+          }
+        },
+        "field_spec": {
+          "privileged_user": {
+            "data_type": "string",
+            "providers": [
+              {
+                "type": "template-v1",
+                "template": "${TLOG_USER}"
+              }
+            ]
+          },
+          "source_host": {
+            "data_type": "string",
+            "providers": [
+              {
+                "type": "template-v1",
+                "template": "${source}"
+              }
+            ]
+          }
+        },
+        "key_spec": [],
+        "notification_settings": {
+          "grace_period_ms": 300000,
+          "backlog_size": 3
+        },
+        "notifications": []
+      }
+    },
+    {
+      "v": "1",
+      "type": {
+        "name": "event_definition",
+        "version": "1"
+      },
+      "id": "event-after-hours",
+      "data": {
+        "title": {
+          "@type": "string",
+          "@value": "After-Hours Activity Detected"
+        },
+        "description": {
+          "@type": "string",
+          "@value": "Login ou atividade privilegiada detectada fora do horário comercial. Requer pipeline rule 'mark_after_hours' ativa."
+        },
+        "priority": {
+          "@type": "integer",
+          "@value": 3
+        },
+        "alert": {
+          "@type": "boolean",
+          "@value": true
+        },
+        "config": {
+          "type": "aggregation-v1",
+          "query": "after_hours:true AND ((application_name:sshd AND message:\"session opened\") OR (application_name:tlog-rec-session AND message:rec))",
+          "query_parameters": [],
+          "streams": [],
+          "search_within_ms": 300000,
+          "execute_every_ms": 300000,
+          "group_by": [],
+          "series": [],
+          "conditions": {
+            "expression": null
+          }
+        },
+        "field_spec": {
+          "activity_type": {
+            "data_type": "string",
+            "providers": [
+              {
+                "type": "template-v1",
+                "template": "${application_name}"
+              }
+            ]
+          },
+          "source_host": {
+            "data_type": "string",
+            "providers": [
+              {
+                "type": "template-v1",
+                "template": "${source}"
+              }
+            ]
+          }
+        },
+        "key_spec": [],
+        "notification_settings": {
+          "grace_period_ms": 600000,
+          "backlog_size": 5
+        },
+        "notifications": []
+      }
+    },
+    {
+      "v": "1",
+      "type": {
+        "name": "event_definition",
+        "version": "1"
+      },
+      "id": "event-first-time-access",
+      "data": {
+        "title": {
+          "@type": "string",
+          "@value": "First Time Access Detected"
+        },
+        "description": {
+          "@type": "string",
+          "@value": "Usuário acessou servidor pela primeira vez. Requer lookup table 'known_user_server_pairs' e pipeline rule configuradas."
+        },
+        "priority": {
+          "@type": "integer",
+          "@value": 3
+        },
+        "alert": {
+          "@type": "boolean",
+          "@value": true
+        },
+        "config": {
+          "type": "aggregation-v1",
+          "query": "first_time_access:true AND application_name:sshd AND message:\"session opened\"",
+          "query_parameters": [],
+          "streams": [],
+          "search_within_ms": 60000,
+          "execute_every_ms": 60000,
+          "group_by": [],
+          "series": [],
+          "conditions": {
+            "expression": null
+          }
+        },
+        "field_spec": {
+          "new_user": {
+            "data_type": "string",
+            "providers": [
+              {
+                "type": "template-v1",
+                "template": "${_login_user}"
+              }
+            ]
+          },
+          "target_server": {
+            "data_type": "string",
+            "providers": [
+              {
+                "type": "template-v1",
+                "template": "${source}"
+              }
+            ]
+          }
+        },
+        "key_spec": [],
+        "notification_settings": {
+          "grace_period_ms": 300000,
+          "backlog_size": 3
+        },
+        "notifications": []
+      }
+    },
+    {
+      "v": "1",
+      "type": {
+        "name": "pipeline_rule",
+        "version": "1"
+      },
+      "id": "rule-mark-after-hours",
+      "data": {
+        "title": {
+          "@type": "string",
+          "@value": "Mark After Hours Activity"
+        },
+        "description": {
+          "@type": "string",
+          "@value": "Marca mensagens que ocorrem fora do horário comercial (08:00-18:00, seg-sex, UTC-3)"
+        },
+        "source": {
+          "@type": "string",
+          "@value": "rule \"mark_after_hours\"\nwhen\n  // Fora do horário comercial: antes das 08:00 ou depois das 18:00 (UTC-3 = UTC+11 para hora)\n  // Ou fins de semana (domingo=1, sábado=7)\n  NOT (\n    hour($message.timestamp) >= 11 AND hour($message.timestamp) < 21 AND\n    day_of_week($message.timestamp) >= 2 AND day_of_week($message.timestamp) <= 6\n  )\nthen\n  set_field(\"after_hours\", true);\nend"
+        }
+      }
+    }
+  ]
+}

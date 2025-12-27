@@ -1,0 +1,38 @@
+# =============================================================================
+# Extensão do compose.yaml para configuração de Email
+# CSI do Linux - Parte 03: Alertas Inteligentes
+#
+# Uso:
+#   1. Copie este arquivo para o diretório do compose.yaml original
+#   2. Atualize o .env com as variáveis GRAYLOG_TRANSPORT_EMAIL_*
+#   3. Execute: podman-compose -f compose.yaml -f compose-email.yaml up -d
+#
+# Ou adicione estas variáveis diretamente no compose.yaml principal
+# =============================================================================
+
+services:
+  graylog:
+    environment:
+      # Habilita envio de emails
+      - GRAYLOG_TRANSPORT_EMAIL_ENABLED=${GRAYLOG_TRANSPORT_EMAIL_ENABLED:-false}
+
+      # Servidor SMTP
+      - GRAYLOG_TRANSPORT_EMAIL_HOSTNAME=${GRAYLOG_TRANSPORT_EMAIL_HOSTNAME:-}
+      - GRAYLOG_TRANSPORT_EMAIL_PORT=${GRAYLOG_TRANSPORT_EMAIL_PORT:-587}
+
+      # Autenticação
+      - GRAYLOG_TRANSPORT_EMAIL_USE_AUTH=${GRAYLOG_TRANSPORT_EMAIL_USE_AUTH:-true}
+      - GRAYLOG_TRANSPORT_EMAIL_AUTH_USERNAME=${GRAYLOG_TRANSPORT_EMAIL_AUTH_USERNAME:-}
+      - GRAYLOG_TRANSPORT_EMAIL_AUTH_PASSWORD=${GRAYLOG_TRANSPORT_EMAIL_AUTH_PASSWORD:-}
+
+      # TLS/SSL
+      - GRAYLOG_TRANSPORT_EMAIL_USE_TLS=${GRAYLOG_TRANSPORT_EMAIL_USE_TLS:-true}
+      - GRAYLOG_TRANSPORT_EMAIL_USE_SSL=${GRAYLOG_TRANSPORT_EMAIL_USE_SSL:-false}
+
+      # Remetente e URLs
+      - GRAYLOG_TRANSPORT_EMAIL_FROM_EMAIL=${GRAYLOG_TRANSPORT_EMAIL_FROM_EMAIL:-graylog@localhost}
+      - GRAYLOG_TRANSPORT_EMAIL_WEB_INTERFACE_URL=${GRAYLOG_TRANSPORT_EMAIL_WEB_INTERFACE_URL:-http://localhost:9000}
+
+      # Configurações avançadas (opcionais)
+      # - GRAYLOG_TRANSPORT_EMAIL_SUBJECT_PREFIX=[Graylog]"
+      # - GRAYLOG_TRANSPORT_EMAIL_BODY_TEMPLATE_HTML=/path/to/template.html"

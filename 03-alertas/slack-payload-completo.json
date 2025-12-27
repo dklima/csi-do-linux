@@ -1,0 +1,95 @@
+{
+  "text": "🚨 *Alerta Graylog*: ${event_definition_title}",
+  "blocks": [
+    {
+      "type": "header",
+      "text": {
+        "type": "plain_text",
+        "text": "🚨 Alerta de Segurança",
+        "emoji": true
+      }
+    },
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "*${event_definition_title}*\n${event_definition_description}"
+      }
+    },
+    {
+      "type": "divider"
+    },
+    {
+      "type": "section",
+      "fields": [
+        {
+          "type": "mrkdwn",
+          "text": "*⏰ Horário:*\n${event.timestamp}"
+        },
+        {
+          "type": "mrkdwn",
+          "text": "*📊 Prioridade:*\n${event.priority}"
+        }
+      ]
+    },
+    {
+      "type": "section",
+      "fields": [
+        {
+          "type": "mrkdwn",
+          "text": "*🆔 Event ID:*\n`${event.id}`"
+        },
+        {
+          "type": "mrkdwn",
+          "text": "*📋 Definition ID:*\n`${event_definition_id}`"
+        }
+      ]
+    },
+    {
+      "type": "divider"
+    },
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "*Campos do Evento:*\n${foreach event.fields field}`${field.key}`: ${field.value}\n${end}"
+      }
+    },
+    {
+      "type": "divider"
+    },
+    {
+      "type": "actions",
+      "elements": [
+        {
+          "type": "button",
+          "text": {
+            "type": "plain_text",
+            "text": "🔍 Ver no Graylog",
+            "emoji": true
+          },
+          "style": "primary",
+          "url": "${http_external_uri}alerts/${event.id}"
+        },
+        {
+          "type": "button",
+          "text": {
+            "type": "plain_text",
+            "text": "📖 Abrir Documentação",
+            "emoji": true
+          },
+          "url": "${http_external_uri}alerts/definitions/${event_definition_id}"
+        }
+      ]
+    },
+    {
+      "type": "context",
+      "elements": [
+        {
+          "type": "mrkdwn",
+          "text": "Enviado pelo Graylog | CSI do Linux - Alertas de Segurança"
+        }
+      ]
+    }
+  ]
+}

@@ -10,6 +10,7 @@ Cada diretório contém os arquivos necessários para reproduzir o tutorial corr
 |---|------|-----------|
 | 01 | [Servidor de Logs com Graylog](https://fogonacaixadagua.com.br/2025/12/graylog-logs-centralizados-tutorial/) | [01-graylog](./01-graylog) |
 | 02 | [Gravação de Sessões com tlog](https://fogonacaixadagua.com.br/2025/12/tlog-gravacao-sessoes-terminal-linux/) | [02-tlog](./02-tlog) |
+| 03 | [Transformando logs em alertas](https://fogonacaixadagua.com.br/2025/12/alertas-graylog-seguranca/) | [03-alertas](./03-alertas) |
 
 ## Pré-requisitos gerais
 
@@ -30,6 +31,13 @@ public_repo/
 │   ├── 10-graylog.conf
 │   ├── sssd.conf.example
 │   └── extract-session.sh
+├── 03-alertas/          # Alertas de segurança no Graylog
+│   ├── compose-email.yaml
+│   ├── .env.example
+│   ├── alertas-seguranca.json
+│   ├── pipeline-after-hours.txt
+│   ├── slack-payload-completo.json
+│   └── test-alerts.sh
 └── ...
 ```
 

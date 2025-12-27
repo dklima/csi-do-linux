@@ -1,0 +1,102 @@
+// =============================================================================
+// Pipeline Rule: Marcar Atividade Fora de Horário
+// CSI do Linux - Parte 03: Alertas Inteligentes
+// =============================================================================
+//
+// Esta regra adiciona o campo "after_hours: true" em mensagens que ocorrem
+// fora do horário comercial definido (08:00-18:00, segunda a sexta).
+//
+// INSTALAÇÃO:
+// 1. System > Pipelines > Manage Rules > Create Rule
+// 2. Cole o conteúdo da regra abaixo
+// 3. Salve e conecte a um Pipeline existente
+// 4. Garanta que o Pipeline esteja conectado aos Streams desejados
+//
+// NOTA: Os horários estão em UTC. Ajuste conforme seu fuso horário.
+// Para UTC-3 (Brasília), 08:00 local = 11:00 UTC, 18:00 local = 21:00 UTC
+// =============================================================================
+
+rule "mark_after_hours"
+when
+  // Verifica se está FORA do horário comercial
+  // Horário comercial: 08:00-18:00, seg-sex (ajustado para UTC)
+  //
+  // hour() retorna 0-23 em UTC
+  // day_of_week() retorna: 1=Domingo, 2=Segunda, ..., 7=Sábado
+  //
+  // Para Brasília (UTC-3):
+  //   - 08:00 BRT = 11:00 UTC
+  //   - 18:00 BRT = 21:00 UTC
+  //
+  NOT (
+    hour($message.timestamp) >= 11 AND hour($message.timestamp) < 21 AND
+    day_of_week($message.timestamp) >= 2 AND day_of_week($message.timestamp) <= 6
+  )
+then
+  set_field("after_hours", true);
+end
+
+// =============================================================================
+// VARIAÇÃO: Pipeline Rule para outros fusos horários
+// =============================================================================
+
+// Para Portugal (UTC+0/UTC+1 em verão):
+// rule "mark_after_hours_pt"
+// when
+//   NOT (
+//     hour($message.timestamp) >= 8 AND hour($message.timestamp) < 18 AND
+//     day_of_week($message.timestamp) >= 2 AND day_of_week($message.timestamp) <= 6
+//   )
+// then
+//   set_field("after_hours", true);
+// end
+
+// =============================================================================
+// VARIAÇÃO: Regra para extrair usuário de login SSH
+// =============================================================================
+
+rule "extract_ssh_login_user"
+when
+  has_field("application_name") AND
+  to_string($message.application_name) == "sshd" AND
+  contains(to_string($message.message), "session opened for user")
+then
+  // Extrai o nome do usuário da mensagem
+  // Formato esperado: "session opened for user USERNAME"
+  let msg = to_string($message.message);
+  let pattern = "session opened for user ([^ ]+)";
+  let matched = regex(pattern, msg);
+
+  if (matched != null) {
+    let groups = matched["0"];
+    if (groups != null) {
+      set_field("_login_user", groups["1"]);
+    }
+  }
+end
+
+// =============================================================================
+// VARIAÇÃO: Regra para verificar usuário conhecido (requer Lookup Table)
+// =============================================================================
+
+rule "check_known_user_server"
+when
+  has_field("gl2_source_input") AND
+  has_field("_login_user") AND
+  has_field("source")
+then
+  // Cria a chave combinando usuário e servidor
+  let user_server = concat(
+    to_string($message._login_user),
+    "@",
+    to_string($message.source)
+  );
+
+  // Consulta a lookup table "known_user_server_pairs"
+  // Se não encontrar, retorna "unknown"
+  let is_known = lookup_value("known_user_server_pairs", user_server, "unknown");
+
+  if (is_known == "unknown") {
+    set_field("first_time_access", true);
+  }
+end
