@@ -7,7 +7,7 @@ Parte da série **CSI do Linux** sobre auditoria em ambientes Linux.
 ## Pré-requisitos
 
 - Graylog funcionando ([Parte 01](../01-graylog/))
-- Linux com rsyslog (Fedora 43+, RHEL 10+, ou Ubuntu 24.04+)
+- Linux com rsyslog (Fedora 44+, RHEL 9+, ou Ubuntu 24.04+)
 - Acesso root
 
 ## Arquivos
@@ -102,7 +102,7 @@ whoami
 exit
 
 # Verifique no Graylog
-# Search: application_name:tlog-rec-session
+# Search: application_name:tlog
 ```
 
 ## Reproduzindo Sessões
@@ -145,6 +145,18 @@ nc -zv IP_DO_GRAYLOG 1514
 
 # Verificar erros do rsyslog
 sudo journalctl -u rsyslog -f
+```
+
+**Verificar logs locais do tlog:**
+```bash
+# Qualquer distro com systemd
+sudo journalctl -t tlog
+
+# Fedora/RHEL (tlog usa facility authpriv)
+sudo grep tlog /var/log/secure
+
+# Debian/Ubuntu
+sudo grep tlog /var/log/auth.log
 ```
 
 **Ubuntu sem rsyslog:**
