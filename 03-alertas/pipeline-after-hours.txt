@@ -19,18 +19,16 @@
 rule "mark_after_hours"
 when
   // Verifica se está FORA do horário comercial
-  // Horário comercial: 08:00-18:00, seg-sex (ajustado para UTC)
+  // Horário comercial: 08:00-18:00, seg-sex
   //
-  // hour() retorna 0-23 em UTC
-  // day_of_week() retorna: 1=Domingo, 2=Segunda, ..., 7=Sábado
-  //
-  // Para Brasília (UTC-3):
-  //   - 08:00 BRT = 11:00 UTC
-  //   - 18:00 BRT = 21:00 UTC
+  // format_date() com timezone converte automaticamente
+  // "HH" = hora 0-23, "e" = dia da semana (1=Segunda a 7=Domingo)
   //
   NOT (
-    hour($message.timestamp) >= 11 AND hour($message.timestamp) < 21 AND
-    day_of_week($message.timestamp) >= 2 AND day_of_week($message.timestamp) <= 6
+    to_long(format_date(to_date($message.timestamp), "HH", "America/Sao_Paulo")) >= 8 AND
+    to_long(format_date(to_date($message.timestamp), "HH", "America/Sao_Paulo")) < 18 AND
+    to_long(format_date(to_date($message.timestamp), "e", "America/Sao_Paulo")) >= 1 AND
+    to_long(format_date(to_date($message.timestamp), "e", "America/Sao_Paulo")) <= 5
   )
 then
   set_field("after_hours", true);
@@ -40,12 +38,14 @@ end
 // VARIAÇÃO: Pipeline Rule para outros fusos horários
 // =============================================================================
 
-// Para Portugal (UTC+0/UTC+1 em verão):
+// Para Portugal (ajuste o timezone):
 // rule "mark_after_hours_pt"
 // when
 //   NOT (
-//     hour($message.timestamp) >= 8 AND hour($message.timestamp) < 18 AND
-//     day_of_week($message.timestamp) >= 2 AND day_of_week($message.timestamp) <= 6
+//     to_long(format_date(to_date($message.timestamp), "HH", "Europe/Lisbon")) >= 8 AND
+//     to_long(format_date(to_date($message.timestamp), "HH", "Europe/Lisbon")) < 18 AND
+//     to_long(format_date(to_date($message.timestamp), "e", "Europe/Lisbon")) >= 1 AND
+//     to_long(format_date(to_date($message.timestamp), "e", "Europe/Lisbon")) <= 5
 //   )
 // then
 //   set_field("after_hours", true);
@@ -81,22 +81,17 @@ end
 
 rule "check_known_user_server"
 when
-  has_field("gl2_source_input") AND
   has_field("_login_user") AND
   has_field("source")
 then
-  // Cria a chave combinando usuário e servidor
-  let user_server = concat(
-    to_string($message._login_user),
-    "@",
-    to_string($message.source)
-  );
+  // concat() aceita apenas 2 argumentos, então aninhamos
+  let user_server = concat(concat(to_string($message._login_user), "@"), to_string($message.source));
 
   // Consulta a lookup table "known_user_server_pairs"
   // Se não encontrar, retorna "unknown"
   let is_known = lookup_value("known_user_server_pairs", user_server, "unknown");
 
-  if (is_known == "unknown") {
+  if (is_known == "unknown") then
     set_field("first_time_access", true);
-  }
+  end
 end
